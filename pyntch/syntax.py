@@ -250,6 +250,18 @@ def build_expr(reporter, frame, space, tree, evals):
       for qif in qual.ifs:
         build_expr(reporter, frame, space, qif.test, evals)
 
+  # dict comprehension
+  elif isinstance(tree, ast.DictComp):
+    key = build_expr(reporter, frame, space, tree.key, evals)
+    value = build_expr(reporter, frame, space, tree.value, evals)
+    expr = DictType.create_dict([(key, value)])
+    for qual in tree.quals:
+      seq = build_expr(reporter, frame, space, qual.list, evals)
+      elem = IterElement(ExecutionFrame(frame, qual.list), qual.list, seq)
+      build_assign(reporter, frame, space, qual.assign, elem, evals)
+      for qif in qual.ifs:
+        build_expr(reporter, frame, space, qif.test, evals)
+
   # yield (for python 2.5)
   elif isinstance(tree, ast.Yield):
     value = build_expr(reporter, frame, space, tree.value, evals)

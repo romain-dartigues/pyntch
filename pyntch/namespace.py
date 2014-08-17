@@ -332,6 +332,16 @@ class Namespace(object):
         for qif in qual.ifs:
           self.register_names(qif.test)
 
+    # dict comprehension
+    elif isinstance(tree, ast.DictComp):
+      self.register_names(tree.key)
+      self.register_names(tree.value)
+      for qual in tree.quals:
+        self.register_names(qual.list)
+        self.register_names(qual.assign)
+        for qif in qual.ifs:
+          self.register_names(qif.test)
+
     # Assert
     elif isinstance(tree, ast.Assert):
       self.register_names(tree.test)
